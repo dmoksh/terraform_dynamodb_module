@@ -49,14 +49,14 @@ variable "write_capacity" {
 variable "hash_key" {
   description = "The attribute name that acts as the hash key for the DynamoDB table"
   type = object({
-    key_name = string
-   key_type = string
+    name = string
+   type = string
   })
 
   validation {
     condition = alltrue([
-      length(var.hash_key.key_name) > 0 && length(var.hash_key.key_name) <= 255,
-      contains(["S", "N", "B"], var.hash_key.key_type)]
+      length(var.hash_key.name) > 0 && length(var.hash_key.name) <= 255,
+      contains(["S", "N", "B"], var.hash_key.type)]
     )
     error_message = "Hash key object is not set properly."
   }
@@ -78,19 +78,16 @@ variable "range_key" {
 variable "range_key" {
   description = "The attribute name that acts as the range key for the DynamoDB table"
   type = object({
-    key_name = string
-    key_type = string
+    name = string
+    type = string
   })
-
-
   validation {
     condition = alltrue([
-      length(var.range_key.key_name) > 0 && length(var.range_key.key_name) <= 255,
-      contains(["S", "N", "B"], var.range_key.key_type)]
+      length(var.range_key.name) > 0 && length(var.range_key.name) <= 255,
+      contains(["S", "N", "B"], var.range_key.type)]
     )
     error_message = "Range key object is not set properly."
   }
-
 }
 
 variable "table_class" {
