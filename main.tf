@@ -4,6 +4,19 @@ provider "aws" {
 
 }
 
+locals {
+    combined_attributes = concat(
+       [var.hash_key],
+       [var.range_key],
+       [for attr in var.additional_attributes : attr ]
+    )
+}
+
+output "checking_locals" {
+  value = local.combined_attributes
+}
+
+
 resource "aws_dynamodb_table" "example" {
   name         = var.dynamodb_table_name
   billing_mode = var.billing_mode
@@ -15,14 +28,17 @@ resource "aws_dynamodb_table" "example" {
   range_key      = var.range_key.name
 
   # Add hash key - this is required.
+  /*
   attribute {
     name = var.hash_key.name
     type = var.hash_key.type
   }
+  */
+
 
   # Conditionally add range key attribute
   dynamic "attribute" {
-    for_each = var.range_key != null ? [var.range_key] : []
+    for_each = local.combined_attributes
     content {
       name = attribute.value.name
       type = attribute.value.type

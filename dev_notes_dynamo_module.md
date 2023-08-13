@@ -21,3 +21,18 @@
 		│       * write_capacity can not be set when billing_mode is "PAY_PER_REQUEST"
 	
 		'
+* Additional attributes
+
+	* I thougt i can let users define additional attributes (non hash, range and GSI and LSI, just regular columns), but nope, it doesn;t work. Here is the error message
+	`
+	Error: 1 error occurred:
+	│       * all attributes must be indexed. Unused attributes: ["empname" "empsal"]
+	│ 
+	│ 
+	│ 
+	│   with aws_dynamodb_table.example,
+	│   on main.tf line 20, in resource "aws_dynamodb_table" "example":
+	│   20: resource "aws_dynamodb_table" "example" {
+		
+	`
+* outputs is your print statement in terraform. If you want to see a dynamic local variable, just use output, it will be shown even if there is run time error in the code.	 
