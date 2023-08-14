@@ -50,7 +50,7 @@ variable "hash_key" {
   description = "The attribute name that acts as the hash key for the DynamoDB table"
   type = object({
     name = string
-   type = string
+    type = string
   })
 
   validation {
@@ -81,10 +81,11 @@ variable "range_key" {
     name = string
     type = string
   })
+  default = null
   validation {
     condition = alltrue([
-      length(var.range_key.name) > 0 && length(var.range_key.name) <= 255,
-      contains(["S", "N", "B"], var.range_key.type)]
+      var.range_key == null ? true : length(var.range_key.name) > 0 && length(var.range_key.name) <= 255,
+      var.range_key == null ? true : contains(["S", "N", "B"], var.range_key.type)]
     )
     error_message = "Range key object is not set properly."
   }

@@ -4,39 +4,34 @@ provider "aws" {
 
 }
 
+#local variable with both hash and range key - used to create both hash and range with single "attribute" block.
+#only conact range key if it is not null.
 locals {
-    combined_attributes = concat(
-       [var.hash_key],
-       [var.range_key],
-       [for attr in var.additional_attributes : attr ]
-    )
+  combined_attributes = var.range_key == null ? [var.hash_key] : concat([var.hash_key], [var.range_key])
 }
 
+#TODO - REMOVE
 output "checking_locals" {
   value = local.combined_attributes
 }
 
 
 resource "aws_dynamodb_table" "example" {
-  name         = var.dynamodb_table_name
+  name = var.dynamodb_table_name
+
+  hash_key = var.hash_key.name
+  #range key - default is null. Apply only if 
+  range_key = var.range_key == null ? null : (length(var.range_key) > 0 ? var.range_key.name : null)
+
   billing_mode = var.billing_mode
   #read_capacity and write_capacity variables should be set only when billing_mode is PROVISIONED.
-  read_capacity  = (var.billing_mode == "PROVISIONED" ? var.read_capacity : null)  
+  read_capacity  = (var.billing_mode == "PROVISIONED" ? var.read_capacity : null)
   write_capacity = (var.billing_mode == "PROVISIONED" ? var.write_capacity : null)
-  
-  hash_key       = var.hash_key.name
-  range_key      = var.range_key.name
-
-  # Add hash key - this is required.
-  /*
-  attribute {
-    name = var.hash_key.name
-    type = var.hash_key.type
-  }
-  */
 
 
-  # Conditionally add range key attribute
+
+
+  # Conditionally add range and hash key attributes
   dynamic "attribute" {
     for_each = local.combined_attributes
     content {

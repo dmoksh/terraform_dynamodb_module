@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <ul id="Tp_oizOF">
+      <li id="IG">
+        <p>Dynamo Terraform</p>
+        <ul>
+          <li id="By" data-type="heading">
+            <p>project todo</p>
+            <ul>
+              <li id="bb" data-type="task">
+                <p>LSI</p>
+                <ul>
+                  <li id="t8u" data-type="task">
+                    <p>Should work with null or []</p>
+                  </li>
+                </ul>
+              </li>
+              <li id="TI" data-type="task">
+                <p>GSI</p>
+              </li>
+              <li id="OV" data-type="task">
+                <p>TTL</p>
+              </li>
+              <li id="44" data-type="task">
+                <p>Encryption</p>
+              </li>
+              <li id="vZ" data-type="task">
+                <p>Streams</p>
+              </li>
+              <li id="kt" data-type="task">
+                <p>Global Tables</p>
+              </li>
+              <li id="mN" data-type="task">
+                <p>Autoscaling</p>
+              </li>
+              <li id="Po" data-type="task">
+                <p>Delete protection</p>
+              </li>
+              <li id="Uv_" data-type="task">
+                <p>Tags</p>
+              </li>
+              <li id="2WO" data-type="task">
+                <p>Naming module</p>
+              </li>
+              <li id="Re" data-type="task">
+                <p>Hash key with type</p>
+                <ul>
+                  <li id="LQ6" data-type="task">
+                    <p>Should work with null or []</p>
+                  </li>
+                </ul>
+              </li>
+              <li id="Pra" data-type="task">
+                <p>Range key with type</p>
+                <ul>
+                  <li id="AFy" data-type="task">
+                    <p>Should work with null or []</p>
+                  </li>
+                </ul>
+              </li>
+              <li id="6zM" data-type="task">
+                <p>Attribute block</p>
+                <ul>
+                  <li id="bI1" data-done="2023-08-14T03:33:21Z" data-type="task">
+                    <p>Dynamic for both hash and range key</p>
+                  </li>
+                  <li id="8-P" data-type="task">
+                    <p>How do I make it dynamic for LSI and GSI attributes?</p>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li id="EY" data-type="heading">
+            <p>reading</p>
+            <ul>
+              <li id="ua" data-type="task">
+                <p><a href="https://developer.hashicorp.com/terraform/tutorials/aws/aws-dynamodb-scale">aws-dynamodb-scale</a></p>
+              </li>
+              <li id="lr" data-type="task">
+                <p><a href="https://gmusumeci.medium.com/how-to-create-amazon-dynamodb-tables-in-aws-with-terraform-aff8e49e3c21">how-to-create-amazon-dynamodb-tables-in-aws-with-terraform-aff8e49e3c21</a></p>
+              </li>
+              <li id="4W" data-type="task">
+                <p><a href="https://registry.terraform.io/modules/rafaelmarques7/dynamodb/aws/latest/examples/2.lsi">2.lsi</a></p>
+              </li>
+              <li id="8J" data-type="task">
+                <p><a href="https://www.koding.com/docs/terraform/providers/aws/r/dynamodb_table.html/">dynamodb_table.html</a></p>
+              </li>
+            </ul>
+          </li>
+          <li id="l3c" data-type="heading">
+            <p>learn</p>
+            <ul>
+              <li id="d6c" data-type="code">
+                <p>hash (partition) key | range (sort) key</p>
+              </li>
+              <li id="gKb" data-type="code">
+                <p>The pay-per-request mode can be more cost-effective than provisioned capacity for some unpredictable workloads.</p>
+              </li>
+              <li id="GJX" data-type="code">
+                <p>Only configure attribute blocks for table attributes that you use in the keys or other indexes</p>
+              </li>
+              <li id="Jp4" data-type="code">
+                <p>AWS recommends using global secondary indexes unless you specifically need a Local secondary index, for example when you need strong consistency.</p>
+              </li>
+              <li id="Vj2" data-type="code">
+                <p>Never check for var.var_name on a condition without checking it is not null first.</p>
+              </li>
+            </ul>
+          </li>
+          <li id="t7Z" data-type="heading">
+            <p>Misc todo </p>
+            <ul>
+              <li id="mQ8" data-type="task">
+                <p>How to upload CSV file as DynamoDB table is AWS console</p>
+              </li>
+            </ul>
+          </li>
+          <li id="9s4" data-type="heading">
+            <p>Cg changes</p>
+            <ul>
+              <li id="pRO" data-type="code">
+                <p>Changed hash_key and range_key to map types with both name and type instead of just name</p>
+              </li>
+              <li id="qir" data-type="code">
+                <p/>
+              </li>
+              <li id="Wx">
+                <p/>
+              </li>
+              <li id="DO">
+                <p/>
+              </li>
+              <li id="qx">
+                <p/>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </body>
+</html>

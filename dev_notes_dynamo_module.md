@@ -20,7 +20,7 @@
 		│       * read_capacity can not be set when billing_mode is "PAY_PER_REQUEST"
 		│       * write_capacity can not be set when billing_mode is "PAY_PER_REQUEST"
 	
-		'
+		`
 * Additional attributes
 
 	* I thougt i can let users define additional attributes (non hash, range and GSI and LSI, just regular columns), but nope, it doesn;t work. Here is the error message
@@ -35,4 +35,9 @@
 	│   20: resource "aws_dynamodb_table" "example" {
 		
 	`
-* outputs is your print statement in terraform. If you want to see a dynamic local variable, just use output, it will be shown even if there is run time error in the code.	 
+* outputs is your print statement in terraform. If you want to see a dynamic local variable, just use output, it will be shown even if there is run time error in the code.
+
+* terraform.tfvars is good. just define variable_name = variable_value and it is easy to test instead of enterring values during each apply statement.	 
+
+* validations - whenever you check against a variable, make sure it is not null.
+	`var.range_key == null ? true : length(var.range_key.name) > 0 && length(var.range_key.name) <= 255,`
