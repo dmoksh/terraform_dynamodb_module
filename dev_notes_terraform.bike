@@ -17,6 +17,12 @@
                   <li id="t8u" data-type="task">
                     <p>Should work with null or []</p>
                   </li>
+                  <li id="Bkk" data-type="task">
+                    <p><span>Does LSI has type? | </span><em>Range and Hash key does.</em></p>
+                  </li>
+                  <li id="D-8" data-type="task">
+                    <p>Rename LSI to lsi</p>
+                  </li>
                 </ul>
               </li>
               <li id="TI" data-type="task">

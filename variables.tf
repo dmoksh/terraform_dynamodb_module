@@ -37,14 +37,6 @@ variable "write_capacity" {
   }
 }
 
-/* variable "hash_key" {
-  description = "The attribute name that acts as the hash key for the DynamoDB table"
-  type        = string
-  validation {
-    condition     = length(var.hash_key) > 0 && length(var.hash_key) <= 255
-    error_message = "Hash key name must be between 1 and 255 characters."
-  }
-} */
 
 variable "hash_key" {
   description = "The attribute name that acts as the hash key for the DynamoDB table"
@@ -62,18 +54,6 @@ variable "hash_key" {
   }
 
 }
-
-/*
-variable "range_key" {
-  description = "The attribute name that acts as the range key for the DynamoDB table. Leave it null if not required."
-  type        = string
-  default     = null
-  validation {
-    #condition     = var.range_key == null ||  (var.range_key != null && (length(var.range_key) > 0 && length(var.range_key) <= 255))
-    condition     = var.range_key == null ? true : (length(var.range_key) > 0 && length(var.range_key) <= 255)
-    error_message = "Range key name, if provided, must be between 1 and 255 characters."
-  }
-}*/
 
 variable "range_key" {
   description = "The attribute name that acts as the range key for the DynamoDB table"
@@ -168,9 +148,7 @@ variable "LSI" {
   validation {
     condition = alltrue([
       for lsi in var.LSI :
-      length(lsi.name) > 0 && length(lsi.name) <= 255 &&
-      length(lsi.range_key) > 0 && length(lsi.range_key) <= 255 &&
-      contains(["ALL", "KEYS_ONLY", "INCLUDE"], lsi.projection_type)
+      length(lsi.name) > 0 && length(lsi.name) <= 255 && length(lsi.range_key) > 0 && length(lsi.range_key) <= 255 && contains(["ALL", "KEYS_ONLY", "INCLUDE"], lsi.projection_type)
     ])
     error_message = "LSI configurations are not valid. Check name lengths and projection types."
   }

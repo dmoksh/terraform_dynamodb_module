@@ -41,3 +41,17 @@
 
 * validations - whenever you check against a variable, make sure it is not null.
 	`var.range_key == null ? true : length(var.range_key.name) > 0 && length(var.range_key.name) <= 255,`
+	
+* Error while creating LSI
+
+	`
+	aws_dynamodb_table.example: Creating...
+	╷
+	│ Error: creating Amazon DynamoDB Table (dinakar-dynamo-module-test-102): ValidationException: One or more parameter values were invalid: Table KeySchema does not have a range key, which is required when specifying a LocalSecondaryIndex
+	│       status code: 400, request id: 0FN2QMBFRQ7AJ48JGPR34VGRBRVV4KQNSO5AEMVJF66Q9ASUAAJG
+	│ 
+	│   with aws_dynamodb_table.example,
+	│   on main.tf line 23, in resource "aws_dynamodb_table" "example":
+	│   23: resource "aws_dynamodb_table" "example" {
+	│
+	`
