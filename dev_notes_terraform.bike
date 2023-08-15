@@ -14,19 +14,79 @@
               <li id="bb" data-type="task">
                 <p>LSI</p>
                 <ul>
-                  <li id="t8u" data-type="task">
+                  <li id="t8u" data-done="2023-08-14T21:36:38Z" data-type="task">
                     <p>Should work with null or []</p>
                   </li>
                   <li id="Bkk" data-type="task">
                     <p><span>Does LSI has type? | </span><em>Range and Hash key does.</em></p>
+                    <ul>
+                      <li id="d9v" data-done="2023-08-14T21:36:55Z" data-type="task">
+                        <p>Used string by default</p>
+                      </li>
+                    </ul>
                   </li>
                   <li id="D-8" data-type="task">
                     <p>Rename LSI to lsi</p>
                   </li>
+                  <li id="8y_" data-done="2023-08-14T21:41:10Z" data-type="task">
+                    <p>Should I check range_key is same as main range_key</p>
+                    <ul>
+                      <li id="C1f" data-done="2023-08-14T21:41:12Z" data-type="task">
+                        <p>See what happens if it is same?</p>
+                      </li>
+                      <li id="ihA" data-done="2023-08-14T21:41:12Z" data-type="task">
+                        <p>Huh, yes LSI range_key can be same as main key.</p>
+                      </li>
+                    </ul>
+                  </li>
+                  <li id="0h2" data-done="2023-08-14T22:21:03Z" data-type="task">
+                    <p>Test with multiple LSI’s</p>
+                  </li>
+                  <li id="10q" data-done="2023-08-14T22:22:29Z" data-type="task">
+                    <p>What happens if 2 LSI’s have same name</p>
+                    <ul>
+                      <li id="n82" data-done="2023-08-14T22:22:29Z" data-type="task">
+                        <p>Won’t work</p>
+                      </li>
+                    </ul>
+                  </li>
                 </ul>
               </li>
-              <li id="TI" data-type="task">
+              <li id="bC9" data-type="task">
+                <p><mark>Where were additional_attributes being used?</mark></p>
+              </li>
+              <li id="TI" data-done="2023-08-15T02:42:05Z" data-type="task">
                 <p>GSI</p>
+                <ul>
+                  <li id="YXl" data-done="2023-08-15T02:42:04Z" data-type="task">
+                    <p>Created GSI where hash_key is table’s range_key. So dup attribute block for same name. But worked.</p>
+                  </li>
+                </ul>
+              </li>
+              <li id="yl4" data-done="2023-08-14T23:15:25Z" data-type="task">
+                <p>Create one with LSI + GSI</p>
+              </li>
+              <li id="JeW" data-done="2023-08-15T03:14:24Z" data-type="task">
+                <p><mark>Check Terraform module code.</mark></p>
+                <ul>
+                  <li id="DMI" data-done="2023-08-15T03:15:24Z" data-type="task">
+                    <p>Hash and range should be defined in var.attributes separately ☹️</p>
+                  </li>
+                  <li id="kbw" data-done="2023-08-15T03:34:24Z" data-type="task">
+                    <p>How are they handling GSI and LSI attributes?</p>
+                    <ul>
+                      <li id="KLX" data-done="2023-08-15T03:34:25Z" data-type="task">
+                        <p>Add manually to var.attributes</p>
+                      </li>
+                      <li id="4c6" data-done="2023-08-15T03:34:26Z" data-type="task">
+                        <p>I guess, I’d have to create a sample project and see what is happening?</p>
+                      </li>
+                    </ul>
+                  </li>
+                  <li id="p6j" data-done="2023-08-15T03:34:40Z" data-type="task">
+                    <p>No validation for read/write capacity vars</p>
+                  </li>
+                </ul>
               </li>
               <li id="OV" data-type="task">
                 <p>TTL</p>
@@ -101,20 +161,11 @@
           <li id="l3c" data-type="heading">
             <p>learn</p>
             <ul>
-              <li id="d6c" data-type="code">
-                <p>hash (partition) key | range (sort) key</p>
-              </li>
               <li id="gKb" data-type="code">
                 <p>The pay-per-request mode can be more cost-effective than provisioned capacity for some unpredictable workloads.</p>
               </li>
-              <li id="GJX" data-type="code">
-                <p>Only configure attribute blocks for table attributes that you use in the keys or other indexes</p>
-              </li>
               <li id="Jp4" data-type="code">
                 <p>AWS recommends using global secondary indexes unless you specifically need a Local secondary index, for example when you need strong consistency.</p>
-              </li>
-              <li id="Vj2" data-type="code">
-                <p>Never check for var.var_name on a condition without checking it is not null first.</p>
               </li>
             </ul>
           </li>
