@@ -17,6 +17,13 @@ variable "billing_mode" {
   }
 }
 
+variable "auto_scale" {
+  description = "flag for auto-scale"
+  type        = string
+  default     = false
+
+}
+
 variable "read_capacity" {
   description = "The read capacity units for the DynamoDB table"
   type        = number

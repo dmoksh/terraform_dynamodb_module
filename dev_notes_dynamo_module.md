@@ -103,3 +103,11 @@ Error: creating Amazon DynamoDB Table (dinakar-dynamo-module-test-102): replicas
 │   26: resource "aws_dynamodb_table" "example" {
 ```
 
+* APY_PER_REQUEST + Autoscaling error
+```
+  │ Error: creating Application AutoScaling Target (table/dinakar-dynamo-module-test-102): ValidationException: Validation failed for scalable target. Reason: PAY_PER_REQUEST table mode is not scalable.
+│ 
+│   with aws_appautoscaling_target.environment_table_write_target[0],
+│   on main.tf line 142, in resource "aws_appautoscaling_target" "environment_table_write_target":
+│  142: resource "aws_appautoscaling_target" "environment_table_write_target" {
+```

@@ -23,7 +23,7 @@ output "GSI" {
 }
 
 resource "aws_dynamodb_table" "example" {
-  
+
   name = var.dynamodb_table_name
 
   hash_key = var.hash_key.name
@@ -114,7 +114,8 @@ resource "aws_dynamodb_table" "example" {
 }
 
 resource "aws_appautoscaling_target" "environment_table_read_target" {
-  count = var.billing_mode == "PAY_PER_REQUEST" ? 0:1
+  #dont create it billing_mode is PAY_PER_REQUEST or var.auto_scale is false.
+  count              = (var.auto_scale == false || var.billing_mode == "PAY_PER_REQUEST") ? 0 : 1
   max_capacity       = 20
   min_capacity       = 5
   resource_id        = "table/${aws_dynamodb_table.example.name}"
@@ -123,7 +124,7 @@ resource "aws_appautoscaling_target" "environment_table_read_target" {
 }
 
 resource "aws_appautoscaling_policy" "environment_table_read_policy" {
-  count = var.billing_mode == "PAY_PER_REQUEST" ? 0:1
+  count              = (var.auto_scale == false || var.billing_mode == "PAY_PER_REQUEST") ? 0 : 1
   name               = "DynamoDBReadCapacityUtilization:${aws_appautoscaling_target.environment_table_read_target[0].resource_id}"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.environment_table_read_target[0].resource_id
@@ -140,7 +141,7 @@ resource "aws_appautoscaling_policy" "environment_table_read_policy" {
 }
 
 resource "aws_appautoscaling_target" "environment_table_write_target" {
-  count = var.billing_mode == "PAY_PER_REQUEST" ? 0:1
+  count              = (var.auto_scale == false || var.billing_mode == "PAY_PER_REQUEST") ? 0 : 1
   max_capacity       = 10
   min_capacity       = 5
   resource_id        = "table/${aws_dynamodb_table.example.name}"
@@ -149,7 +150,7 @@ resource "aws_appautoscaling_target" "environment_table_write_target" {
 }
 
 resource "aws_appautoscaling_policy" "environment_table_write_policy" {
-  count = var.billing_mode == "PAY_PER_REQUEST" ? 0:1
+  count              = (var.auto_scale == false || var.billing_mode == "PAY_PER_REQUEST") ? 0 : 1
   name               = "DynamoDBWriteCapacityUtilization:${aws_appautoscaling_target.environment_table_write_target[0].resource_id}"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.environment_table_write_target[0].resource_id
