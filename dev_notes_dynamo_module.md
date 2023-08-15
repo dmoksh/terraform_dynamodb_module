@@ -80,9 +80,10 @@
 * LSI without range_key - NO
 ```
 One or more parameter values were invalid: Table KeySchema does not have a range key, which is required when specifying a LocalSecondaryIndex
-```>>>>>>> External Changes
+>>>>>>> External Changes
+```
 
-* Global table with PROVISIONED billing_mode
+* Global table with PROVISIONED, In fact this will fail after creating the table in main region and will error out before creating the replica region. This means, no state.
 ```
 Error: creating Amazon DynamoDB Table (dinakar-dynamo-module-test-102): replicas: creating replica (us-east-2): ValidationException: Table write capacity should either be Pay-Per-Request or AutoScaled.
 │       status code: 400, request id: KBT8HTFOCQVE7GMKKSFKUN95RBVV4KQNSO5AEMVJF66Q9ASUAAJG
@@ -92,3 +93,13 @@ Error: creating Amazon DynamoDB Table (dinakar-dynamo-module-test-102): replicas
 │   26: resource "aws_dynamodb_table" "example" {
 │ 
 ````
+* Global table with PROVISIONED + AutoScaled. Still fails, cannot be run in single apply statement, worse, if fails after creating main table and then fails before creating auto-scaling rules and replica, with no mention on main table in the state file.
+```
+ Error: creating Amazon DynamoDB Table (dinakar-dynamo-module-test-102): replicas: creating replica (us-east-2): ValidationException: Table write capacity should either be Pay-Per-Request or AutoScaled.
+│       status code: 400, request id: TPGM1E4MJM6VGT06NJ188BC9KVVV4KQNSO5AEMVJF66Q9ASUAAJG
+│ 
+│   with aws_dynamodb_table.example,
+│   on main.tf line 26, in resource "aws_dynamodb_table" "example":
+│   26: resource "aws_dynamodb_table" "example" {
+```
+

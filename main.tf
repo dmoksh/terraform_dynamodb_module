@@ -22,8 +22,8 @@ output "GSI" {
   value = var.GSI
 }
 
-
 resource "aws_dynamodb_table" "example" {
+  
   name = var.dynamodb_table_name
 
   hash_key = var.hash_key.name
@@ -47,8 +47,8 @@ resource "aws_dynamodb_table" "example" {
 
   #Add attribue from LSI  
   dynamic "attribute" {
-     #only attempt co create LSI attribute if range_key is not null
-    for_each = var.range_key != null ? var.LSI : []    
+    #only attempt co create LSI attribute if range_key is not null
+    for_each = var.range_key != null ? var.LSI : []
     content {
       name = attribute.value.range_key
       type = "S"
@@ -56,19 +56,19 @@ resource "aws_dynamodb_table" "example" {
   }
 
   #Add attribute from GSI hash_key
-  dynamic "attribute"{
+  dynamic "attribute" {
     for_each = var.GSI
     content {
       name = attribute.value.hash_key
-      type ="S"        
+      type = "S"
     }
   }
   #Add attribute from GSI range_key
-  dynamic "attribute"{
+  dynamic "attribute" {
     for_each = var.GSI
     content {
       name = attribute.value.range_key
-      type ="S"        
+      type = "S"
     }
   }
 
@@ -86,29 +86,83 @@ resource "aws_dynamodb_table" "example" {
 
   #Add GSI
 
-dynamic "global_secondary_index" {
-  for_each = var.GSI
-  content {
-      name = global_secondary_index.value.name
-      hash_key = global_secondary_index.value.hash_key
-      range_key = global_secondary_index.value.range_key
-      write_capacity = global_secondary_index.value.write_capacity
-      read_capacity = global_secondary_index.value.read_capacity
-      projection_type = global_secondary_index.value.projection_type
+
+  dynamic "global_secondary_index" {
+    for_each = var.GSI
+    content {
+      name               = global_secondary_index.value.name
+      hash_key           = global_secondary_index.value.hash_key
+      range_key          = global_secondary_index.value.range_key
+      write_capacity     = global_secondary_index.value.write_capacity
+      read_capacity      = global_secondary_index.value.read_capacity
+      projection_type    = global_secondary_index.value.projection_type
       non_key_attributes = global_secondary_index.value.non_key_attributes
+    }
+  }
+
+  #stream_enabled   = false
+  #stream_view_type = "NEW_AND_OLD_IMAGES"
+
+  replica {
+    region_name = "us-east-2"
+  }
+
+  lifecycle {
+    ignore_changes = [read_capacity, write_capacity]
+  }
+
+}
+
+resource "aws_appautoscaling_target" "environment_table_read_target" {
+  count = var.billing_mode == "PAY_PER_REQUEST" ? 0:1
+  max_capacity       = 20
+  min_capacity       = 5
+  resource_id        = "table/${aws_dynamodb_table.example.name}"
+  scalable_dimension = "dynamodb:table:ReadCapacityUnits"
+  service_namespace  = "dynamodb"
+}
+
+resource "aws_appautoscaling_policy" "environment_table_read_policy" {
+  count = var.billing_mode == "PAY_PER_REQUEST" ? 0:1
+  name               = "DynamoDBReadCapacityUtilization:${aws_appautoscaling_target.environment_table_read_target[0].resource_id}"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.environment_table_read_target[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.environment_table_read_target[0].scalable_dimension
+  service_namespace  = aws_appautoscaling_target.environment_table_read_target[0].service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "DynamoDBReadCapacityUtilization"
+    }
+
+    target_value = 70.0
   }
 }
 
- #stream_enabled   = false
- #stream_view_type = "NEW_AND_OLD_IMAGES"
-
-replica {
-  region_name = "us-east-2"
+resource "aws_appautoscaling_target" "environment_table_write_target" {
+  count = var.billing_mode == "PAY_PER_REQUEST" ? 0:1
+  max_capacity       = 10
+  min_capacity       = 5
+  resource_id        = "table/${aws_dynamodb_table.example.name}"
+  scalable_dimension = "dynamodb:table:WriteCapacityUnits"
+  service_namespace  = "dynamodb"
 }
 
+resource "aws_appautoscaling_policy" "environment_table_write_policy" {
+  count = var.billing_mode == "PAY_PER_REQUEST" ? 0:1
+  name               = "DynamoDBWriteCapacityUtilization:${aws_appautoscaling_target.environment_table_write_target[0].resource_id}"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.environment_table_write_target[0].resource_id
+  scalable_dimension = aws_appautoscaling_target.environment_table_write_target[0].scalable_dimension
+  service_namespace  = aws_appautoscaling_target.environment_table_write_target[0].service_namespace
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "DynamoDBWriteCapacityUtilization"
+    }
+
+    target_value = 70.0
+  }
 }
-
-
-
 
 
