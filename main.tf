@@ -25,16 +25,35 @@ output "GSI" {
 resource "aws_dynamodb_table" "example" {
 
   name = var.dynamodb_table_name
-
   hash_key = var.hash_key.name
   #range key - default is null. Apply only if 
   range_key = var.range_key == null ? null : (length(var.range_key) > 0 ? var.range_key.name : null)
 
-  billing_mode = var.billing_mode
+  ttl {
+    enabled = var.ttl.enabled
+    attribute_name = var.ttl.attribute_name
+  }
+
+  table_class = var.table_class
+
+  stream_enabled = var.stream_enabled
+  stream_view_type = var.stream_view_type
+
+  deletion_protection_enabled = var.deletion_protection_enabled
+
+  point_in_time_recovery {
+     enabled = var.point_in_time_recovery_enabled
+  }
+
+
+
+  billing_mode = "PAY_PER_REQUEST"
   #read_capacity and write_capacity variables should be set only when billing_mode is PROVISIONED.
+  # DECIDED TO GO WITH PAY_PER_REQUEST DUE TO LIMITATIONS WITH PROVISIONED + AUTO SCALE ANG GLOBAL TABLES. So comment out
+  /*
   read_capacity  = (var.billing_mode == "PROVISIONED" ? var.read_capacity : null)
   write_capacity = (var.billing_mode == "PROVISIONED" ? var.write_capacity : null)
-
+*/
 
   # Conditionally add range and hash key attributes
   dynamic "attribute" {
@@ -85,16 +104,15 @@ resource "aws_dynamodb_table" "example" {
   }
 
   #Add GSI
-
-
   dynamic "global_secondary_index" {
     for_each = var.GSI
     content {
       name               = global_secondary_index.value.name
       hash_key           = global_secondary_index.value.hash_key
       range_key          = global_secondary_index.value.range_key
-      write_capacity     = global_secondary_index.value.write_capacity
-      read_capacity      = global_secondary_index.value.read_capacity
+      #DECIDED TO GO WITH PAY_PER_REQUEST DUE TO LIMITATIONS WITH PROVISIONED + AUTO SCALE ANG GLOBAL TABLES. So comment out
+      #write_capacity     = global_secondary_index.value.write_capacity
+      #read_capacity      = global_secondary_index.value.read_capacity
       projection_type    = global_secondary_index.value.projection_type
       non_key_attributes = global_secondary_index.value.non_key_attributes
     }
@@ -103,16 +121,22 @@ resource "aws_dynamodb_table" "example" {
   #stream_enabled   = false
   #stream_view_type = "NEW_AND_OLD_IMAGES"
 
-  replica {
-    region_name = "us-east-2"
+ dynamic "replica" {
+    for_each = var.replica_regions
+    content {
+      region_name = replica.value
+    }
   }
 
+#Do I need this?
   lifecycle {
     ignore_changes = [read_capacity, write_capacity]
   }
 
 }
 
+/*
+DECIDED TO GO WITH PAY_PER_REQUEST DUE TO LIMITATIONS WITH PROVISIONED + AUTO SCALE ANG GLOBAL TABLES.
 resource "aws_appautoscaling_target" "environment_table_read_target" {
   #dont create it billing_mode is PAY_PER_REQUEST or var.auto_scale is false.
   count              = (var.auto_scale == false || var.billing_mode == "PAY_PER_REQUEST") ? 0 : 1
@@ -165,5 +189,5 @@ resource "aws_appautoscaling_policy" "environment_table_write_policy" {
     target_value = 70.0
   }
 }
-
+*/
 

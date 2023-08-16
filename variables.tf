@@ -7,6 +7,8 @@ variable "dynamodb_table_name" {
   }
 }
 
+/*
+#DECIDED TO GO WITH PAY_PER_REQUEST DUE TO LIMITATIONS WITH PROVISIONED + AUTO SCALE ANG GLOBAL TABLES.
 variable "billing_mode" {
   description = "The billing mode for the DynamoDB table (e.g., PROVISIONED or PAY_PER_REQUEST)"
   type        = string
@@ -43,6 +45,7 @@ variable "write_capacity" {
     error_message = "Write capacity should be greater than 0."
   }
 }
+*/
 
 
 variable "hash_key" {
@@ -81,10 +84,10 @@ variable "range_key" {
 variable "table_class" {
   description = "The class of the DynamoDB table (for tagging purposes)"
   type        = string
-  default     = "Standard"
+  default     = "STANDARD"
   validation {
-    condition     = length(var.table_class) > 0
-    error_message = "Table class must not be empty."
+    condition     = contains(["STANDARD","STANDARD_INFREQUENT_ACCESS"],var.table_class)
+    error_message = "Table class must not be either STANDARD or STANDARD_INFREQUENT_ACCESS."
   }
 }
 
@@ -167,8 +170,9 @@ variable "GSI" {
     name               = string
     hash_key           = string
     range_key          = string
-    write_capacity     = number
-    read_capacity      = number
+    #DECIDED TO GO WITH PAY_PER_REQUEST DUE TO LIMITATIONS WITH PROVISIONED + AUTO SCALE ANG GLOBAL TABLES. So comment out
+    #write_capacity     = number
+    #read_capacity      = number
     projection_type    = string
     non_key_attributes = list(string)
   }))
@@ -190,7 +194,32 @@ variable "replica_regions" {
   type        = list(string)
   default     = []
   validation {
-    condition     = length(setintersection(var.replica_regions, ["us-east-1", "us-west-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "sa-east-1"])) == length(var.replica_regions)
+    condition     = length(setintersection(var.replica_regions, ["us-east-1", "us-east-2", "us-west-1", "us-west-2", "eu-west-1", "eu-central-1", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "sa-east-1"])) == length(var.replica_regions)
     error_message = "One or more of the specified replica regions are not supported."
   }
+}
+
+
+variable "ttl" {
+  description = "Define TTL in seconds"
+  type = object({
+    enabled = bool
+    attribute_name = optional(string)
+  })
+  default = {
+    enabled = false
+    attribute_name = ""
+  }
+}
+
+variable "point_in_time_recovery_enabled" {
+  description = "Whether to enable point-in-time recovery"
+  type        = bool
+  default     = false
+}
+
+variable "deletion_protection_enabled" {
+  description = "Enables deletion protection for table"
+  type        = bool
+  default     = null
 }

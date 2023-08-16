@@ -11,7 +11,7 @@
           <li id="By" data-type="heading">
             <p>project todo</p>
             <ul>
-              <li id="bb" data-type="task">
+              <li id="bb" data-done="2023-08-16T18:55:24Z" data-type="task">
                 <p>LSI</p>
                 <ul>
                   <li id="t8u" data-done="2023-08-14T21:36:38Z" data-type="task">
@@ -50,10 +50,10 @@
                       </li>
                     </ul>
                   </li>
+                  <li id="bC9" data-done="2023-08-16T19:17:07Z" data-type="task">
+                    <p><mark>Where were additional_attributes being used? - No need to define them as separate attributes.</mark></p>
+                  </li>
                 </ul>
-              </li>
-              <li id="bC9" data-type="task">
-                <p><mark>Where were additional_attributes being used?</mark></p>
               </li>
               <li id="TI" data-done="2023-08-15T02:42:05Z" data-type="task">
                 <p>GSI</p>
@@ -88,26 +88,50 @@
                   </li>
                 </ul>
               </li>
-              <li id="OV" data-type="task">
+              <li id="OV" data-done="2023-08-16T18:55:18Z" data-type="task">
                 <p>TTL</p>
+              </li>
+              <li id="gyd" data-done="2023-08-16T18:59:37Z" data-type="task">
+                <p>Table class</p>
               </li>
               <li id="44" data-type="task">
                 <p>Encryption</p>
               </li>
-              <li id="vZ" data-type="task">
+              <li id="vZ" data-done="2023-08-16T19:05:46Z" data-type="task">
                 <p>Streams</p>
               </li>
-              <li id="kt" data-type="task">
+              <li id="kt" data-done="2023-08-16T17:45:48Z" data-type="task">
                 <p>Global Tables</p>
               </li>
-              <li id="mN" data-type="task">
+              <li id="mN" data-done="2023-08-16T18:55:51Z" data-type="task">
                 <p>Autoscaling</p>
+                <ul>
+                  <li id="64" data-done="2023-08-16T18:56:13Z" data-type="task">
+                    <p>Decided to use PAY_PER_REQEUST, so no autoscaling</p>
+                  </li>
+                </ul>
               </li>
-              <li id="Po" data-type="task">
+              <li id="Po" data-done="2023-08-16T19:16:57Z" data-type="task">
                 <p>Delete protection</p>
               </li>
-              <li id="Uv_" data-type="task">
+              <li id="Uv_" data-done="2023-08-16T19:54:01Z" data-type="task">
                 <p>Tags</p>
+                <ul>
+                  <li id="JEb" data-done="2023-08-16T19:54:00Z" data-type="task">
+                    <p>How are creating tags?</p>
+                    <ul>
+                      <li id="3OE" data-done="2023-08-16T19:53:54Z" data-type="task">
+                        <p>Check S3 moulde</p>
+                      </li>
+                      <li id="xo_" data-done="2023-08-16T19:54:03Z" data-type="task">
+                        <p>Env.hcl</p>
+                      </li>
+                    </ul>
+                  </li>
+                  <li id="iYG" data-type="task">
+                    <p>Global tables - How do we propagate tags.</p>
+                  </li>
+                </ul>
               </li>
               <li id="2WO" data-type="task">
                 <p>Naming module</p>
