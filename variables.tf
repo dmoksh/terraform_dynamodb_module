@@ -151,6 +151,7 @@ variable "LSI" {
   type = list(object({
     name               = string
     range_key          = string
+    range_key_type     = string
     projection_type    = string
     non_key_attributes = list(string)
   }))
@@ -158,7 +159,7 @@ variable "LSI" {
   validation {
     condition = alltrue([
       for lsi in var.LSI :
-      length(lsi.name) > 0 && length(lsi.name) <= 255 && length(lsi.range_key) > 0 && length(lsi.range_key) <= 255 && contains(["ALL", "KEYS_ONLY", "INCLUDE"], lsi.projection_type)
+      length(lsi.name) > 0 && length(lsi.name) <= 255 && length(lsi.range_key) > 0 && length(lsi.range_key) <= 255 && contains(["ALL", "KEYS_ONLY", "INCLUDE"], lsi.projection_type) && contains(["S", "N", "B"], lsi.range_key_type)
     ])
     error_message = "LSI configurations are not valid. Check name lengths and projection types."
   }
@@ -169,7 +170,9 @@ variable "GSI" {
   type = list(object({
     name               = string
     hash_key           = string
+    hash_key_type      = string
     range_key          = string
+    range_key_type     = string
     #DECIDED TO GO WITH PAY_PER_REQUEST DUE TO LIMITATIONS WITH PROVISIONED + AUTO SCALE ANG GLOBAL TABLES. So comment out
     #write_capacity     = number
     #read_capacity      = number
@@ -183,7 +186,9 @@ variable "GSI" {
       length(gsi.name) > 0 && length(gsi.name) <= 255 &&
       length(gsi.hash_key) > 0 && length(gsi.hash_key) <= 255 &&
       (gsi.range_key == null || (length(gsi.range_key) > 0 && length(gsi.range_key) <= 255)) &&
-      contains(["ALL", "KEYS_ONLY", "INCLUDE"], gsi.projection_type)
+      contains(["ALL", "KEYS_ONLY", "INCLUDE"], gsi.projection_type) &&
+      contains(["S", "N", "B"], gsi.range_key_type) && 
+      contains(["S", "N", "B"], gsi.hash_key_type)
     ])
     error_message = "GSI configurations are not valid. Check name lengths, hash key, and projection types."
   }

@@ -9,25 +9,20 @@ provider "aws" {
 #TODO conact LSI only if it is not null
 locals {
   combined_hash_range = var.range_key == null ? [var.hash_key] : concat([var.hash_key], [var.range_key])
+  combined_lsi_gsi = concat (
+    [for obj in var.LSI: {attribute_name = try(obj.range_key,null),attribute_type=try(obj.range_key_type,null),index_type ="lsi",index_key_type="range_key"}],
+    [for obj in var.GSI: {attribute_name = try(obj.hash_key,null),attribute_type=try(obj.hash_key_type,null),index_type ="gsi",index_key_type="hash_key"}],
+    [for obj in var.GSI: {attribute_name = try(obj.range_key,null),attribute_type=try(obj.range_key_type,null),index_type ="gsi",index_key_type="range_key"}]
+  )
 }
 
-
-#TODO - REMOVE
-output "checking_locals" {
+#TODO - REMOVE OUTPUTS
+output "combined_hash_range" {
   value = local.combined_hash_range
 }
-output "LSI" {
-  value = var.LSI
-}
-output "GSI" {
-  value = var.GSI
-}
 
-output "LSI_plus_GSI"{
-  value = concat (
-    [for obj in (concat(var.LSI,var.GSI)): obj.range_key],
-    [for obj in (concat(var.LSI,var.GSI)): try(obj.hash_key,null)]
-  )
+output "combined_lsi_gsi"{
+  value = local.combined_lsi_gsi
 }
 
 resource "aws_dynamodb_table" "example" {
@@ -59,7 +54,7 @@ resource "aws_dynamodb_table" "example" {
     }
   }
 
-  #Add attribue from LSI  
+  #Add attribues from LSI  
   dynamic "attribute" {
     #only attempt co create LSI attribute if range_key is not null
     for_each = var.range_key != null ? var.LSI : []
