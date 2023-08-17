@@ -9,10 +9,13 @@ provider "aws" {
 #TODO conact LSI only if it is not null
 locals {
   combined_hash_range = var.range_key == null ? [var.hash_key] : concat([var.hash_key], [var.range_key])
-  combined_lsi_gsi = concat (
-    [for obj in var.LSI: {attribute_name = try(obj.range_key,null),attribute_type=try(obj.range_key_type,null),index_type ="lsi",index_key_type="range_key"}],
-    [for obj in var.GSI: {attribute_name = try(obj.hash_key,null),attribute_type=try(obj.hash_key_type,null),index_type ="gsi",index_key_type="hash_key"}],
-    [for obj in var.GSI: {attribute_name = try(obj.range_key,null),attribute_type=try(obj.range_key_type,null),index_type ="gsi",index_key_type="range_key"}]
+
+  #set LSI to null if there is no range_key, as AWS doesn't allow LSI without the main range_key for the table.
+  updated_lsi = var.range_key == null ? [] : var.LSI
+  combined_lsi_gsi = concat(
+    [for obj in local.updated_lsi : { attribute_name = try(obj.range_key, null), attribute_type = try(obj.range_key_type, null), index_type = "lsi", index_key_type = "range_key" }],
+    [for obj in var.GSI : { attribute_name = try(obj.hash_key, null), attribute_type = try(obj.hash_key_type, null), index_type = "gsi", index_key_type = "hash_key" }],
+    [for obj in var.GSI : { attribute_name = try(obj.range_key, null), attribute_type = try(obj.range_key_type, null), index_type = "gsi", index_key_type = "range_key" }]
   )
 }
 
@@ -21,28 +24,28 @@ output "combined_hash_range" {
   value = local.combined_hash_range
 }
 
-output "combined_lsi_gsi"{
+output "combined_lsi_gsi" {
   value = local.combined_lsi_gsi
 }
 
 resource "aws_dynamodb_table" "example" {
 
-  name = var.dynamodb_table_name
-  hash_key = var.hash_key.name
-  range_key = var.range_key == null ? null : (length(var.range_key) > 0 ? var.range_key.name : null)
-  billing_mode = "PAY_PER_REQUEST"
-  table_class = var.table_class
-  stream_enabled = var.stream_enabled
-  stream_view_type = var.stream_view_type
+  name                        = var.dynamodb_table_name
+  hash_key                    = var.hash_key.name
+  range_key                   = var.range_key == null ? null : (length(var.range_key) > 0 ? var.range_key.name : null)
+  billing_mode                = "PAY_PER_REQUEST"
+  table_class                 = var.table_class
+  stream_enabled              = var.stream_enabled
+  stream_view_type            = var.stream_view_type
   deletion_protection_enabled = var.deletion_protection_enabled
 
   ttl {
-    enabled = var.ttl.enabled
+    enabled        = var.ttl.enabled
     attribute_name = var.ttl.attribute_name
   }
 
   point_in_time_recovery {
-     enabled = var.point_in_time_recovery_enabled
+    enabled = var.point_in_time_recovery_enabled
   }
 
   # Conditionally add range and hash key attributes
@@ -55,6 +58,7 @@ resource "aws_dynamodb_table" "example" {
   }
 
   #Add attribues from LSI  
+  /*
   dynamic "attribute" {
     #only attempt co create LSI attribute if range_key is not null
     for_each = var.range_key != null ? var.LSI : []
@@ -63,8 +67,25 @@ resource "aws_dynamodb_table" "example" {
       type = "S"
     }
   }
+  */
+
+  #code to create GSI hash + range with single attribute block.
+  #trying to create for both LSI and GSI key attributes with single block.
+  dynamic "attribute" {
+    for_each = local.combined_lsi_gsi
+    #for_each = toset([for each in local.combined_lsi_gsi : each if each.index_type=="gsi"])
+    content {
+      name = attribute.value.attribute_name
+      type = attribute.value.attribute_type
+    }
+  }
 
 
+
+
+
+  #separate blocks to create attributes from GSI and LSI
+  /*
   #Add attribute from GSI hash_key
   dynamic "attribute" {
     for_each = var.GSI
@@ -81,6 +102,7 @@ resource "aws_dynamodb_table" "example" {
       type = "S"
     }
   }
+*/
 
   #Add LSI
   dynamic "local_secondary_index" {
@@ -106,7 +128,7 @@ resource "aws_dynamodb_table" "example" {
     }
   }
 
- dynamic "replica" {
+  dynamic "replica" {
     for_each = var.replica_regions
     content {
       region_name = replica.value

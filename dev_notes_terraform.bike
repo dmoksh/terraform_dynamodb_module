@@ -12,7 +12,16 @@
             <p>project todo</p>
             <ul>
               <li id="0nE" data-type="task">
-                <p>Table_class</p>
+                <p><mark>Table_class</mark></p>
+              </li>
+              <li id="1DZ" data-type="task">
+                <p><mark>Propagate Tags</mark></p>
+              </li>
+              <li id="44" data-type="task">
+                <p><mark>Encryption</mark></p>
+              </li>
+              <li id="upX" data-type="task">
+                <p>How to see all the attributes that were created by terraform.</p>
               </li>
               <li id="bb" data-done="2023-08-16T18:55:24Z" data-type="task">
                 <p>LSI</p>
@@ -97,9 +106,6 @@
               <li id="gyd" data-done="2023-08-16T18:59:37Z" data-type="task">
                 <p>Table class</p>
               </li>
-              <li id="44" data-type="task">
-                <p>Encryption</p>
-              </li>
               <li id="vZ" data-done="2023-08-16T19:05:46Z" data-type="task">
                 <p>Streams</p>
               </li>
@@ -132,7 +138,7 @@
                     </ul>
                   </li>
                   <li id="iYG" data-type="task">
-                    <p>Global tables - How do we propagate tags.</p>
+                    <p><span>Global tables - How do we propagate </span><mark>tags</mark><span>.</span></p>
                   </li>
                 </ul>
               </li>
@@ -161,7 +167,7 @@
                   <li id="bI1" data-done="2023-08-14T03:33:21Z" data-type="task">
                     <p>Dynamic for both hash and range key</p>
                   </li>
-                  <li id="8-P" data-type="task">
+                  <li id="8-P" data-done="2023-08-17T15:20:47Z" data-type="task">
                     <p>How do I make it dynamic for LSI and GSI attributes?</p>
                   </li>
                 </ul>

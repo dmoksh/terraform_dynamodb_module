@@ -86,7 +86,7 @@ variable "table_class" {
   type        = string
   default     = "STANDARD"
   validation {
-    condition     = contains(["STANDARD","STANDARD_INFREQUENT_ACCESS"],var.table_class)
+    condition     = contains(["STANDARD", "STANDARD_INFREQUENT_ACCESS"], var.table_class)
     error_message = "Table class must not be either STANDARD or STANDARD_INFREQUENT_ACCESS."
   }
 }
@@ -168,11 +168,11 @@ variable "LSI" {
 variable "GSI" {
   description = "List of global secondary index (GSI) definitions."
   type = list(object({
-    name               = string
-    hash_key           = string
-    hash_key_type      = string
-    range_key          = string
-    range_key_type     = string
+    name           = string
+    hash_key       = string
+    hash_key_type  = string
+    range_key      = string
+    range_key_type = string
     #DECIDED TO GO WITH PAY_PER_REQUEST DUE TO LIMITATIONS WITH PROVISIONED + AUTO SCALE ANG GLOBAL TABLES. So comment out
     #write_capacity     = number
     #read_capacity      = number
@@ -187,7 +187,7 @@ variable "GSI" {
       length(gsi.hash_key) > 0 && length(gsi.hash_key) <= 255 &&
       (gsi.range_key == null || (length(gsi.range_key) > 0 && length(gsi.range_key) <= 255)) &&
       contains(["ALL", "KEYS_ONLY", "INCLUDE"], gsi.projection_type) &&
-      contains(["S", "N", "B"], gsi.range_key_type) && 
+      contains(["S", "N", "B"], gsi.range_key_type) &&
       contains(["S", "N", "B"], gsi.hash_key_type)
     ])
     error_message = "GSI configurations are not valid. Check name lengths, hash key, and projection types."
@@ -208,11 +208,11 @@ variable "replica_regions" {
 variable "ttl" {
   description = "Define TTL in seconds"
   type = object({
-    enabled = bool
+    enabled        = bool
     attribute_name = optional(string)
   })
   default = {
-    enabled = false
+    enabled        = false
     attribute_name = ""
   }
 }
