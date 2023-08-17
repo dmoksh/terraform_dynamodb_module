@@ -11,6 +11,7 @@ locals {
   combined_hash_range = var.range_key == null ? [var.hash_key] : concat([var.hash_key], [var.range_key])
 }
 
+
 #TODO - REMOVE
 output "checking_locals" {
   value = local.combined_hash_range
@@ -20,6 +21,13 @@ output "LSI" {
 }
 output "GSI" {
   value = var.GSI
+}
+
+output "LSI_plus_GSI"{
+  value = concat (
+    [for obj in (concat(var.LSI,var.GSI)): obj.range_key],
+    [for obj in (concat(var.LSI,var.GSI)): try(obj.hash_key,null)]
+  )
 }
 
 resource "aws_dynamodb_table" "example" {
@@ -60,6 +68,7 @@ resource "aws_dynamodb_table" "example" {
       type = "S"
     }
   }
+
 
   #Add attribute from GSI hash_key
   dynamic "attribute" {
@@ -107,7 +116,7 @@ resource "aws_dynamodb_table" "example" {
     content {
       region_name = replica.value
     }
-    propogate_tags = true
+    #propogate_tags = true
   }
 
 }

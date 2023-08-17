@@ -11,6 +11,9 @@
           <li id="By" data-type="heading">
             <p>project todo</p>
             <ul>
+              <li id="0nE" data-type="task">
+                <p>Table_class</p>
+              </li>
               <li id="bb" data-done="2023-08-16T18:55:24Z" data-type="task">
                 <p>LSI</p>
                 <ul>
