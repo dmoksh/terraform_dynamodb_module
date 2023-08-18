@@ -19,6 +19,8 @@
 	
 * Hash key
 	* Don't just define hash_key aka primary key also **define it's type**
+
+* Terraform GSI and LSI doesnt allow type setting in respective blocks, but types are determined by how index attributes are set!
 	
 * Validations
 	* `read_capcity` and `write_capacity` should assigned only when capacity mode aka `billing_mode` is set to _PROVISIONED_
