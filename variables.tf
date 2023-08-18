@@ -7,7 +7,6 @@ variable "dynamodb_table_name" {
   }
 }
 
-
 variable "hash_key" {
   description = "The attribute name that acts as the hash key for the DynamoDB table"
   type = object({
@@ -51,44 +50,6 @@ variable "table_class" {
   }
 }
 
-variable "additional_attributes" {
-  description = "A list of additional attributes to be added to the table. Each attribute is a map with 'name' and 'type'."
-  type = list(object({
-    name = string
-    type = string
-  }))
-  default = []
-  validation {
-    condition     = alltrue([for attr in var.additional_attributes : length(attr.name) > 0 && length(attr.name) <= 255 && contains(["S", "N", "B"], attr.type)])
-    error_message = "Each attribute name must be between 1 and 255 characters and type must be one of 'S', 'N', or 'B'."
-  }
-}
-
-variable "autoscaling_enabled" {
-  description = "Flag to enable or disable autoscaling for the DynamoDB table"
-  type        = bool
-  default     = false
-}
-
-variable "autoscaling_read" {
-  description = "The maximum read capacity units the DynamoDB table can scale out to when autoscaling is enabled"
-  type        = number
-  default     = 100
-  validation {
-    condition     = var.autoscaling_read >= 0
-    error_message = "Autoscaling read capacity should be greater than or equal to the initial read capacity."
-  }
-}
-
-variable "autoscaling_write" {
-  description = "The maximum write capacity units the DynamoDB table can scale out to when autoscaling is enabled"
-  type        = number
-  default     = 100
-  validation {
-    condition     = var.autoscaling_write >= 0
-    error_message = "Autoscaling write capacity should be greater than or equal to the initial write capacity."
-  }
-}
 
 variable "stream_enabled" {
   description = "Specifies whether a stream is to be created. Valid values are true or false."
