@@ -92,7 +92,8 @@ Error: creating Amazon DynamoDB Table (dinakar-dynamo-module-test-102): replicas
 │   on main.tf line 26, in resource "aws_dynamodb_table" "example":
 │   26: resource "aws_dynamodb_table" "example" {
 │ 
-````
+```
+
 * Global table with PROVISIONED + AutoScaled. Still fails, cannot be run in single apply statement, worse, if fails after creating main table and then fails before creating auto-scaling rules and replica, with no mention on main table in the state file.
 ```
  Error: creating Amazon DynamoDB Table (dinakar-dynamo-module-test-102): replicas: creating replica (us-east-2): ValidationException: Table write capacity should either be Pay-Per-Request or AutoScaled.

@@ -11,17 +11,22 @@
           <li id="By" data-type="heading">
             <p>project todo</p>
             <ul>
-              <li id="0nE" data-type="task">
+              <li id="0nE" data-done="2023-08-18T11:42:29Z" data-type="task">
                 <p><mark>Table_class</mark></p>
               </li>
-              <li id="1DZ" data-type="task">
+              <li id="1DZ" data-done="2023-08-17T20:11:51Z" data-type="task">
                 <p><mark>Propagate Tags</mark></p>
               </li>
               <li id="44" data-type="task">
                 <p><mark>Encryption</mark></p>
               </li>
-              <li id="upX" data-type="task">
+              <li id="upX" data-done="2023-08-17T20:12:15Z" data-type="task">
                 <p>How to see all the attributes that were created by terraform.</p>
+                <ul>
+                  <li id="yxF" data-done="2023-08-17T20:12:16Z" data-type="task">
+                    <p>Go to table scan and in filter it will all the attributes</p>
+                  </li>
+                </ul>
               </li>
               <li id="bb" data-done="2023-08-16T18:55:24Z" data-type="task">
                 <p>LSI</p>
@@ -29,16 +34,24 @@
                   <li id="t8u" data-done="2023-08-14T21:36:38Z" data-type="task">
                     <p>Should work with null or []</p>
                   </li>
-                  <li id="Bkk" data-type="task">
+                  <li id="Bkk" data-done="2023-08-18T11:42:56Z" data-type="task">
                     <p><span>Does LSI has type? | </span><em>Range and Hash key does.</em></p>
                     <ul>
+                      <li id="qUx" data-done="2023-08-18T11:42:57Z" data-type="task">
+                        <p>It has - by API doesn’t expose any way to set it. Use string as default.</p>
+                      </li>
                       <li id="d9v" data-done="2023-08-14T21:36:55Z" data-type="task">
                         <p>Used string by default</p>
                       </li>
                     </ul>
                   </li>
-                  <li id="D-8" data-type="task">
+                  <li id="D-8" data-done="2023-08-18T11:43:17Z" data-type="task">
                     <p>Rename LSI to lsi</p>
+                    <ul>
+                      <li id="4db" data-done="2023-08-18T11:43:18Z" data-type="task">
+                        <p>meh</p>
+                      </li>
+                    </ul>
                   </li>
                   <li id="8y_" data-done="2023-08-14T21:41:10Z" data-type="task">
                     <p>Should I check range_key is same as main range_key</p>
@@ -137,7 +150,7 @@
                       </li>
                     </ul>
                   </li>
-                  <li id="iYG" data-type="task">
+                  <li id="iYG" data-done="2023-08-18T11:43:41Z" data-type="task">
                     <p><span>Global tables - How do we propagate </span><mark>tags</mark><span>.</span></p>
                   </li>
                 </ul>
@@ -145,23 +158,23 @@
               <li id="2WO" data-type="task">
                 <p>Naming module</p>
               </li>
-              <li id="Re" data-type="task">
+              <li id="Re" data-done="2023-08-18T11:43:36Z" data-type="task">
                 <p>Hash key with type</p>
                 <ul>
-                  <li id="LQ6" data-type="task">
+                  <li id="LQ6" data-done="2023-08-18T11:43:26Z" data-type="task">
                     <p>Should work with null or []</p>
                   </li>
                 </ul>
               </li>
-              <li id="Pra" data-type="task">
+              <li id="Pra" data-done="2023-08-18T11:43:35Z" data-type="task">
                 <p>Range key with type</p>
                 <ul>
-                  <li id="AFy" data-type="task">
+                  <li id="AFy" data-done="2023-08-18T11:43:32Z" data-type="task">
                     <p>Should work with null or []</p>
                   </li>
                 </ul>
               </li>
-              <li id="6zM" data-type="task">
+              <li id="6zM" data-done="2023-08-18T11:43:38Z" data-type="task">
                 <p>Attribute block</p>
                 <ul>
                   <li id="bI1" data-done="2023-08-14T03:33:21Z" data-type="task">

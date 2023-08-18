@@ -7,46 +7,6 @@ variable "dynamodb_table_name" {
   }
 }
 
-/*
-#DECIDED TO GO WITH PAY_PER_REQUEST DUE TO LIMITATIONS WITH PROVISIONED + AUTO SCALE ANG GLOBAL TABLES.
-variable "billing_mode" {
-  description = "The billing mode for the DynamoDB table (e.g., PROVISIONED or PAY_PER_REQUEST)"
-  type        = string
-  default     = "PROVISIONED"
-  validation {
-    condition     = contains(["PROVISIONED", "PAY_PER_REQUEST"], var.billing_mode)
-    error_message = "The billing mode can only be PROVISIONED or PAY_PER_REQUEST."
-  }
-}
-
-variable "auto_scale" {
-  description = "flag for auto-scale"
-  type        = string
-  default     = false
-
-}
-
-variable "read_capacity" {
-  description = "The read capacity units for the DynamoDB table"
-  type        = number
-  default     = 5
-  validation {
-    condition     = var.read_capacity > 0
-    error_message = "Read capacity should be greater than 0."
-  }
-}
-
-variable "write_capacity" {
-  description = "The write capacity units for the DynamoDB table"
-  type        = number
-  default     = 5
-  validation {
-    condition     = var.write_capacity > 0
-    error_message = "Write capacity should be greater than 0."
-  }
-}
-*/
-
 
 variable "hash_key" {
   description = "The attribute name that acts as the hash key for the DynamoDB table"
@@ -155,12 +115,13 @@ variable "LSI" {
     projection_type    = string
     non_key_attributes = list(string)
   }))
-  default = []
+  default = null
   validation {
-    condition = alltrue([
+    condition = var.LSI == null || alltrue(
+      try([
       for lsi in var.LSI :
       length(lsi.name) > 0 && length(lsi.name) <= 255 && length(lsi.range_key) > 0 && length(lsi.range_key) <= 255 && contains(["ALL", "KEYS_ONLY", "INCLUDE"], lsi.projection_type) && contains(["S", "N", "B"], lsi.range_key_type)
-    ])
+    ],[true]))
     error_message = "LSI configurations are not valid. Check name lengths and projection types."
   }
 }
@@ -171,17 +132,18 @@ variable "GSI" {
     name           = string
     hash_key       = string
     hash_key_type  = string
-    range_key      = string
-    range_key_type = string
+    range_key      = optional(string)
+    range_key_type = optional(string)
     #DECIDED TO GO WITH PAY_PER_REQUEST DUE TO LIMITATIONS WITH PROVISIONED + AUTO SCALE ANG GLOBAL TABLES. So comment out
     #write_capacity     = number
     #read_capacity      = number
     projection_type    = string
     non_key_attributes = list(string)
   }))
-  default = []
+  default = null
   validation {
-    condition = alltrue([
+    condition = var.GSI == null || alltrue(
+      try([
       for gsi in var.GSI :
       length(gsi.name) > 0 && length(gsi.name) <= 255 &&
       length(gsi.hash_key) > 0 && length(gsi.hash_key) <= 255 &&
@@ -189,7 +151,7 @@ variable "GSI" {
       contains(["ALL", "KEYS_ONLY", "INCLUDE"], gsi.projection_type) &&
       contains(["S", "N", "B"], gsi.range_key_type) &&
       contains(["S", "N", "B"], gsi.hash_key_type)
-    ])
+    ],[true]))
     error_message = "GSI configurations are not valid. Check name lengths, hash key, and projection types."
   }
 }

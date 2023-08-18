@@ -4,29 +4,27 @@ provider "aws" {
 
 }
 
-#local variable with both hash and range key - used to create both hash and range with single "attribute" block.
-#only conact range key if it is not null.
-#TODO conact LSI only if it is not null
 locals {
-  combined_hash_range = var.range_key == null ? [var.hash_key] : concat([var.hash_key], [var.range_key])
+  updated_hash_key = merge(var.hash_key,{"index_type" ="table_hash_key"},{index_key_type = "hash_key"})
+  updated_range_key = var.range_key == null ? null : merge(var.range_key,{"index_type" ="table_range_key"},{index_key_type = "range_key"})
+  combined_update_hash_range = concat([local.updated_hash_key], [local.updated_range_key])
+
 
   #set LSI to null if there is no range_key, as AWS doesn't allow LSI without the main range_key for the table.
-  updated_lsi = var.range_key == null ? [] : var.LSI
-  combined_lsi_gsi = concat(
+  updated_lsi = var.range_key == null || var.LSI == null ? [] : var.LSI
+  #set GSI to empty [] if it is null
+  updated_gsi = var.GSI == null ? [] : var.GSI
+  combined_lsi_gsi_table_keys = concat(
+    #{attribute_name = var.range_key.name,attribute_type=var.range_key.type,index_type ="table_hash_key",index_key_type = "hash_key" },
+    #var.range_key == null ? {attribute_name="",attribute_type="",index_type ="table_range_key",index_key_type = "range_key"} : {attribute_name = var.range_key.name,attribute_type=var.range_key.type,index_type ="table_range_key",index_key_type = "range_key"},
+    [for obj in local.combined_update_hash_range : { attribute_name = obj.name, attribute_type = obj.type, index_type = obj.index_type, index_key_type = obj.index_key_type } if obj != null ],
     [for obj in local.updated_lsi : { attribute_name = try(obj.range_key, null), attribute_type = try(obj.range_key_type, null), index_type = "lsi", index_key_type = "range_key" }],
-    [for obj in var.GSI : { attribute_name = try(obj.hash_key, null), attribute_type = try(obj.hash_key_type, null), index_type = "gsi", index_key_type = "hash_key" }],
-    [for obj in var.GSI : { attribute_name = try(obj.range_key, null), attribute_type = try(obj.range_key_type, null), index_type = "gsi", index_key_type = "range_key" }]
+    [for obj in local.updated_gsi : { attribute_name = try(obj.hash_key, null), attribute_type = try(obj.hash_key_type, null), index_type = "gsi", index_key_type = "hash_key" }  if obj != null] ,
+    [for obj in local.updated_gsi : { attribute_name = try(obj.range_key, null), attribute_type = try(obj.range_key_type, null), index_type = "gsi", index_key_type = "range_key" }  if obj != null && lookup(obj,"range_key",null)!=null]
   )
 }
 
-#TODO - REMOVE OUTPUTS
-output "combined_hash_range" {
-  value = local.combined_hash_range
-}
 
-output "combined_lsi_gsi" {
-  value = local.combined_lsi_gsi
-}
 
 resource "aws_dynamodb_table" "example" {
 
@@ -48,66 +46,20 @@ resource "aws_dynamodb_table" "example" {
     enabled = var.point_in_time_recovery_enabled
   }
 
-  # Conditionally add range and hash key attributes
+  #create range_key, sort_key and lsi and gsi key attributes using single block.
   dynamic "attribute" {
-    for_each = local.combined_hash_range
-    content {
-      name = attribute.value.name
-      type = attribute.value.type
-    }
-  }
-
-  #Add attribues from LSI  
-  /*
-  dynamic "attribute" {
-    #only attempt co create LSI attribute if range_key is not null
-    for_each = var.range_key != null ? var.LSI : []
-    content {
-      name = attribute.value.range_key
-      type = "S"
-    }
-  }
-  */
-
-  #code to create GSI hash + range with single attribute block.
-  #trying to create for both LSI and GSI key attributes with single block.
-  dynamic "attribute" {
-    for_each = local.combined_lsi_gsi
-    #for_each = toset([for each in local.combined_lsi_gsi : each if each.index_type=="gsi"])
+    for_each = local.combined_lsi_gsi_table_keys
+    #for_each = toset([for each in local.combined_lsi_gsi_table_keys : each if each.index_type=="gsi"])
     content {
       name = attribute.value.attribute_name
       type = attribute.value.attribute_type
     }
   }
 
-
-
-
-
-  #separate blocks to create attributes from GSI and LSI
-  /*
-  #Add attribute from GSI hash_key
-  dynamic "attribute" {
-    for_each = var.GSI
-    content {
-      name = attribute.value.hash_key
-      type = "S"
-    }
-  }
-  #Add attribute from GSI range_key
-  dynamic "attribute" {
-    for_each = var.GSI
-    content {
-      name = attribute.value.range_key
-      type = "S"
-    }
-  }
-*/
-
   #Add LSI
   dynamic "local_secondary_index" {
     #only attempt co create LSI if range_key is not null
-    for_each = var.range_key != null ? var.LSI : []
+    for_each = local.updated_lsi
     content {
       name               = local_secondary_index.value.name
       range_key          = local_secondary_index.value.range_key
@@ -118,11 +70,11 @@ resource "aws_dynamodb_table" "example" {
 
   #Add GSI
   dynamic "global_secondary_index" {
-    for_each = var.GSI
+    for_each = local.updated_gsi
     content {
       name               = global_secondary_index.value.name
       hash_key           = global_secondary_index.value.hash_key
-      range_key          = global_secondary_index.value.range_key
+      range_key          = lookup(global_secondary_index.value,"range_key",null)
       projection_type    = global_secondary_index.value.projection_type
       non_key_attributes = global_secondary_index.value.non_key_attributes
     }
@@ -132,10 +84,9 @@ resource "aws_dynamodb_table" "example" {
     for_each = var.replica_regions
     content {
       region_name = replica.value
+      propagate_tags = true
     }
-    #propogate_tags = true
   }
-
 }
 
 
