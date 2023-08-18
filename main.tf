@@ -5,6 +5,8 @@ provider "aws" {
 }
 
 locals {
+
+  #update hash and range key with index_type and index_key_type indicatrors and combine them.
   updated_hash_key = merge(var.hash_key,{"index_type" ="table_hash_key"},{index_key_type = "hash_key"})
   updated_range_key = var.range_key == null ? null : merge(var.range_key,{"index_type" ="table_range_key"},{index_key_type = "range_key"})
   combined_update_hash_range = concat([local.updated_hash_key], [local.updated_range_key])
@@ -14,17 +16,15 @@ locals {
   updated_lsi = var.range_key == null || var.LSI == null ? [] : var.LSI
   #set GSI to empty [] if it is null
   updated_gsi = var.GSI == null ? [] : var.GSI
+
+  #one single local with all attributes used in all keys and indexes.
   combined_lsi_gsi_table_keys = concat(
-    #{attribute_name = var.range_key.name,attribute_type=var.range_key.type,index_type ="table_hash_key",index_key_type = "hash_key" },
-    #var.range_key == null ? {attribute_name="",attribute_type="",index_type ="table_range_key",index_key_type = "range_key"} : {attribute_name = var.range_key.name,attribute_type=var.range_key.type,index_type ="table_range_key",index_key_type = "range_key"},
     [for obj in local.combined_update_hash_range : { attribute_name = obj.name, attribute_type = obj.type, index_type = obj.index_type, index_key_type = obj.index_key_type } if obj != null ],
     [for obj in local.updated_lsi : { attribute_name = try(obj.range_key, null), attribute_type = try(obj.range_key_type, null), index_type = "lsi", index_key_type = "range_key" }],
     [for obj in local.updated_gsi : { attribute_name = try(obj.hash_key, null), attribute_type = try(obj.hash_key_type, null), index_type = "gsi", index_key_type = "hash_key" }  if obj != null] ,
     [for obj in local.updated_gsi : { attribute_name = try(obj.range_key, null), attribute_type = try(obj.range_key_type, null), index_type = "gsi", index_key_type = "range_key" }  if obj != null && lookup(obj,"range_key",null)!=null]
   )
 }
-
-
 
 resource "aws_dynamodb_table" "example" {
 
@@ -49,7 +49,6 @@ resource "aws_dynamodb_table" "example" {
   #create range_key, sort_key and lsi and gsi key attributes using single block.
   dynamic "attribute" {
     for_each = local.combined_lsi_gsi_table_keys
-    #for_each = toset([for each in local.combined_lsi_gsi_table_keys : each if each.index_type=="gsi"])
     content {
       name = attribute.value.attribute_name
       type = attribute.value.attribute_type
